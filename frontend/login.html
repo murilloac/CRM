@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - CRM Administrativo</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <img src="logo.jpg" alt="Logo" class="logo">
+                <h1>Acesso SUPORTE TI</h1>
+                <p>Sistema de Gerenciamento de Chamados</p>
+            </div>
+            
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="usuario">👤 Usuário</label>
+                    <input type="text" id="usuario" required placeholder="Digite seu usuário">
+                </div>
+                
+                <div class="form-group">
+                    <label for="senha">🔒 Senha</label>
+                    <input type="password" id="senha" required placeholder="Digite sua senha">
+                </div>
+                
+                <button type="submit" class="btn-login">
+                    🚀 Entrar no Sistema
+                </button>
+            </form>
+            
+            <div id="errorMessage" class="error-message hidden">
+                ❌ Usuário ou senha incorretos
+            </div>
+            
+            <div class="login-footer">
+                <a href="public.html" class="public-link">← Voltar para Abertura de Chamados</a>
+            </div>
+        </div>
+    </div>
+    
+    <script src="login.js"></script>
+</body>
+</html>

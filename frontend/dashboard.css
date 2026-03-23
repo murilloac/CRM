@@ -1,0 +1,169 @@
+/* ===============================
+   HISTÓRICO COM SCROLL
+   =============================== */
+.historico-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.historico-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    border: 1px solid #e9ecef;
+    height: fit-content;
+    max-height: 450px;
+}
+
+.historico-card h3 {
+    margin: 0 0 20px 0;
+    color: #2c3e50;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filtros-historico {
+    margin-bottom: 15px;
+}
+
+.filtros-historico input {
+    width: 100%;
+    padding: 10px 15px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.filtros-historico input:focus {
+    outline: none;
+    border-color: #f40f2b;
+    box-shadow: 0 0 0 3px rgba(244, 15, 43, 0.1);
+}
+
+.tabela-scroll {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+}
+
+.tabela-scroll table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+}
+
+.tabela-scroll thead {
+    position: sticky;
+    top: 0;
+    background: #f8f9fa;
+    z-index: 10;
+}
+
+.tabela-scroll th {
+    padding: 12px 8px;
+    text-align: left;
+    font-weight: 600;
+    color: #495057;
+    border-bottom: 2px solid #dee2e6;
+    font-size: 12px;
+}
+
+.tabela-scroll td {
+    padding: 10px 8px;
+    border-bottom: 1px solid #f1f3f4;
+    font-size: 13px;
+    color: #495057;
+}
+
+.tabela-scroll tbody tr:hover {
+    background: #f8f9fa;
+}
+
+.tabela-scroll tbody tr:nth-child(even) {
+    background: #fafbfc;
+}
+
+.tabela-scroll tbody tr:nth-child(even):hover {
+    background: #f1f3f4;
+}
+
+/* Responsividade */
+@media (max-width: 1200px) {
+    .historico-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .historico-card {
+        max-height: 350px;
+    }
+    
+    .tabela-scroll {
+        max-height: 250px;
+    }
+    
+    .tabela-scroll th,
+    .tabela-scroll td {
+        padding: 8px 6px;
+        font-size: 11px;
+    }
+}
+
+/* Modo escuro */
+.dark-theme .historico-card {
+    background: #1e293b;
+    border-color: #334155;
+}
+
+.dark-theme .historico-card h3 {
+    color: #f8fafc;
+}
+
+.dark-theme .filtros-historico input {
+    background: #374151;
+    border-color: #6b7280;
+    color: #f9fafb;
+}
+
+.dark-theme .filtros-historico input:focus {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+
+.dark-theme .tabela-scroll {
+    border-color: #475569;
+}
+
+.dark-theme .tabela-scroll thead {
+    background: #374151;
+}
+
+.dark-theme .tabela-scroll th {
+    color: #f1f5f9;
+    border-bottom-color: #475569;
+}
+
+.dark-theme .tabela-scroll td {
+    color: #e2e8f0;
+    border-bottom-color: #334155;
+}
+
+.dark-theme .tabela-scroll tbody tr:hover {
+    background: #475569;
+}
+
+.dark-theme .tabela-scroll tbody tr:nth-child(even) {
+    background: #334155;
+}
+
+.dark-theme .tabela-scroll tbody tr:nth-child(even):hover {
+    background: #475569;
+}

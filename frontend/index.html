@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>CRM - AZShip Kanban</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>
+            <img src="logo.jpg" alt="Logo" class="logo">
+            SD - Suporte TI
+        </h1>
+        <div class="header-buttons">
+            <span id="userInfo" class="user-info"></span>
+            <div id="connectionStatus" class="connection-status" title="Status da conexão">
+                <span class="status-dot"></span>
+                <span class="status-text">Online</span>
+            </div>
+            <button id="btnExport" onclick="exportarRelatorio()" title="Exportar Relatório">📄</button>
+            <button id="btnTheme" onclick="toggleTheme()" title="Alternar tema">🌙</button>
+            <button id="btnDashboard" onclick="window.open('dashboard.html', '_blank')">📊 Dashboard</button>
+            <button id="btnNovo">+ Novo Chamado</button>
+            <button id="btnLogout" onclick="logout()">🚪 Sair</button>
+        </div>
+    </header>
+
+    <div class="filtros">
+        <input id="filtroBusca" type="text" placeholder="Pesquisar...">
+        <input id="filtroSetor" type="text" placeholder="Filtrar por setor">
+        <input id="filtroSolicitante" type="text" placeholder="Filtrar por solicitante">
+    </div>
+
+    <div class="kanban">
+        <div class="coluna" data-status="aberto">
+            <div class="coluna-header">
+                <h2>Aberto</h2>
+                <span class="contador" id="contador-aberto">0</span>
+            </div>
+            <div class="lista" id="aberto">
+                <div class="skeleton-loader hidden">
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="coluna" data-status="atendimento">
+            <div class="coluna-header">
+                <h2>Em Atendimento</h2>
+                <span class="contador" id="contador-atendimento">0</span>
+            </div>
+            <div class="lista" id="atendimento">
+                <div class="skeleton-loader hidden">
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="coluna" data-status="finalizado">
+            <div class="coluna-header">
+                <h2>Finalizado</h2>
+                <span class="contador" id="contador-finalizado">0</span>
+            </div>
+            <div class="lista" id="finalizado">
+                <div class="skeleton-loader hidden">
+                    <div class="skeleton-card"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal" class="modal hidden">
+        <div class="modal-content animated">
+            <div class="modal-header">
+                <h2>Novo Chamado</h2>
+                <span id="btnFechar" class="close">&times;</span>
+            </div>
+
+            <div class="modal-body">
+
+                <label>Solicitante</label>
+                <input id="solicitante" type="text" placeholder="Nome do solicitante">
+
+                <label>Email</label>
+                <input id="email" type="email" placeholder="Email do solicitante">
+
+                <label>Setor</label>
+                <input id="setor" type="text" placeholder="Ex: Logística, Comercial...">
+
+                <label>Prioridade</label>
+                <select id="prioridadeModal" name="prioridade">
+                    <option value="baixa">Baixa - Até 72 horas</option>
+                    <option value="media" selected>Média - Até 48 horas</option>
+                    <option value="alta">Alta - Até 24 horas</option>
+                </select>
+
+                <label>Descrição</label>
+                <textarea id="descricao" placeholder="Detalhe o chamado..."></textarea>
+
+                <h3>Acessos Necessários</h3>
+                <div class="flags">
+                    <label><input type="checkbox" value="AzShip"> AzShip</label>
+                    <label><input type="checkbox" value="Bsoft"> Bsoft</label>
+                    <label><input type="checkbox" value="Email"> Email</label>
+                    <label><input type="checkbox" value="Dominio"> Domínio</label>
+                    <label><input type="checkbox" value="Assinatura"> Assinatura</label>
+                </div>
+
+                <h3>Equipamento será configurado?</h3>
+                <div class="equip-options">
+                    <label><input type="radio" name="equip" value="sim"> Sim</label>
+                    <label><input type="radio" name="equip" value="nao" checked> Não</label>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button id="btnSalvar" class="btn-primary">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalDetalhes" class="modal hidden">
+    <div class="modal-content animated">
+        <div class="modal-header">
+            <h2>Detalhes do Chamado</h2>
+            <span id="btnFecharDetalhes" class="close">&times;</span>
+        </div>
+
+        <div class="modal-body" id="detalhesConteudo">
+            <!-- conteúdo preenchido via JS -->
+        </div>
+
+        <div class="modal-footer">
+            <button id="btnEditar" class="btn-primary">Editar</button>
+        </div>
+        </div>
+    </div>
+
+
+
+    <script src="notifications.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

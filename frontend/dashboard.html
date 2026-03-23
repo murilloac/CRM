@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - CRM</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <h1>
+            <img src="logo.jpg" alt="Logo" class="logo">
+            Dashboard - Relatórios
+        </h1>
+        <div class="header-actions">
+            <button id="btnThemeDashboard" onclick="toggleThemeDashboard()" title="Alternar tema">🌙</button>
+            <button onclick="window.close()" class="btn-voltar">← Voltar ao CRM</button>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <!-- Filtros de Período -->
+        <div class="periodo-filtros">
+            <label>Período:</label>
+            <select id="filtroPeriodo">
+                <option value="7">Últimos 7 dias</option>
+                <option value="30" selected>Últimos 30 dias</option>
+                <option value="90">Últimos 90 dias</option>
+                <option value="365">Último ano</option>
+            </select>
+            <button id="btnAtualizar" onclick="carregarDados()">🔄 Atualizar</button>
+        </div>
+        <!-- Métricas SLA -->
+        <div class="sla-metrics">
+            <div class="sla-card">
+                <div class="sla-icon">⚡</div>
+                <div class="sla-info">
+                    <h3 id="slaVencidos">0</h3>
+                    <p>SLA Vencidos</p>
+                </div>
+            </div>
+            <div class="sla-card">
+                <div class="sla-icon">⏰</div>
+                <div class="sla-info">
+                    <h3 id="slaProximos">0</h3>
+                    <p>Próximos ao Vencimento</p>
+                </div>
+            </div>
+            <div class="sla-card">
+                <div class="sla-icon">📈</div>
+                <div class="sla-info">
+                    <h3 id="tempoMedio">0h</h3>
+                    <p>Tempo Médio Resolução</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cards de Resumo -->
+        <div class="cards-resumo">
+            <div class="card-stat aberto">
+                <div class="stat-icon">📋</div>
+                <div class="stat-info">
+                    <h3 id="totalAberto">0</h3>
+                    <p>Abertos</p>
+                </div>
+            </div>
+            
+            <div class="card-stat atendimento">
+                <div class="stat-icon">⚡</div>
+                <div class="stat-info">
+                    <h3 id="totalAtendimento">0</h3>
+                    <p>Em Atendimento</p>
+                </div>
+            </div>
+            
+
+            
+            <div class="card-stat finalizado">
+                <div class="stat-icon">✅</div>
+                <div class="stat-info">
+                    <h3 id="totalFinalizado">0</h3>
+                    <p>Finalizados</p>
+                </div>
+            </div>
+            
+            <div class="card-stat cancelado">
+                <div class="stat-icon">❌</div>
+                <div class="stat-info">
+                    <h3 id="totalCancelado">0</h3>
+                    <p>Cancelados</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráficos -->
+        <div class="graficos-container">
+            <div class="grafico-card">
+                <h3>📊 Distribuição por Status</h3>
+                <canvas id="graficoStatus"></canvas>
+            </div>
+            
+            <div class="grafico-card">
+                <h3>👥 Chamados por Analista</h3>
+                <canvas id="graficoAnalistas"></canvas>
+            </div>
+            
+            <div class="grafico-card">
+                <h3>🏢 Chamados por Setor</h3>
+                <canvas id="graficoSetores"></canvas>
+            </div>
+            
+            <div class="grafico-card">
+                <h3>🔧 Acessos Mais Solicitados</h3>
+                <canvas id="graficoAcessos"></canvas>
+            </div>
+            
+            <div class="grafico-card grafico-wide">
+                <h3>📈 Evolução dos Chamados (Mensal)</h3>
+                <canvas id="graficoTendencia"></canvas>
+            </div>
+        </div>
+
+        <!-- Tabelas de Relatórios -->
+        <div class="relatorios-container">
+            <div class="relatorio-card">
+                <h3>📈 Resumo por Analista</h3>
+                <table id="tabelaAnalistas">
+                    <thead>
+                        <tr>
+                            <th>Analista</th>
+                            <th>Abertos</th>
+                            <th>Em Atendimento</th>
+                            <th>Finalizados</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            
+            <div class="relatorio-card">
+                <h3>🏢 Resumo por Setor</h3>
+                <table id="tabelaSetores">
+                    <thead>
+                        <tr>
+                            <th>Setor</th>
+                            <th>Chamados</th>
+                            <th>Finalizados</th>
+                            <th>Taxa Conclusão</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Histórico de Chamados -->
+        <div class="historico-container">
+            <div class="historico-card">
+                <div class="historico-header">
+                    <h3>📋 Histórico de Chamados</h3>
+                    <div class="historico-filtros">
+                        <input type="text" id="filtroHistorico" placeholder="🔍 Buscar chamados...">
+                        <select id="filtroStatus">
+                            <option value="">Todos os Status</option>
+                            <option value="aberto">Abertos</option>
+                            <option value="atendimento">Em Atendimento</option>
+                            <option value="finalizado">Finalizados</option>
+                            <option value="cancelado">Cancelados</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="historico-tabela">
+                    <table id="tabelaHistorico">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Solicitante</th>
+                                <th>Setor</th>
+                                <th>Descrição</th>
+                                <th>Status</th>
+                                <th>Analista</th>
+                                <th>Criado em</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <!-- Modal de Detalhes do Chamado -->
+    <div id="modalDetalhesHistorico" class="modal hidden">
+        <div class="modal-content modal-detalhes">
+            <div class="modal-header">
+                <h2>📋 Detalhes do Chamado</h2>
+                <button id="btnFecharDetalhesHistorico" class="btn-fechar">✕</button>
+            </div>
+            <div id="detalhesConteudoHistorico" class="detalhes-conteudo"></div>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>
