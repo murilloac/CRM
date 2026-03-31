@@ -9,6 +9,7 @@ services:
       - ./backend/.env
     volumes:
       - ./backend/crm.db:/app/crm.db
+      - /app/node_modules
     restart: unless-stopped
 
   frontend:
