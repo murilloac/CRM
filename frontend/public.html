@@ -1,201 +1,209 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Abrir Chamado - Suporte TI</title>
-    <link rel="stylesheet" href="public.css">
-</head>
-<body>
+    <link rel="stylesheet" href="public.css" />
+  </head>
+  <body>
     <div class="container">
-        <header class="public-header">
-            <img src="logo.jpg" alt="Logo" class="logo">
-            <div class="header-content">
-                <h1>SD - Suporte TI</h1>
-                <p>Canal para abertura de chamados para o SD</p>
-                <div class="status-info">
-                    <span class="status-dot"></span>
-                    <span>Sistema Online</span>
-                </div>
-            </div>
-            <div class="header-actions">
-                <button onclick="consultarChamado()" class="btn-consulta" title="Consultar chamado existente">
-                    🔍 Consultar Chamado
-                </button>
-                <button id="btnThemePublic" onclick="toggleThemePublic()" title="Alternar tema">🌙</button>
-            </div>
-        </header>
-
-        <div class="form-container">
-            <form id="formChamado">
-                <div class="form-group">
-                    <label for="solicitante">👤 Seu Nome *</label>
-                    <input type="text" id="solicitante" required placeholder="Digite seu nome completo">
-                </div>
-
-                <div class="form-group">
-                    <label for="email">📧 Email *</label>
-                    <input type="email" id="email" required placeholder="Digite seu email corporativo">
-                </div>
-
-                <div class="form-group">
-                    <label for="setor">🏢 Setor *</label>
-                    <select id="setor" required>
-                        <option value="">Selecione seu setor...</option>
-                        <option value="Administrativo">Administrativo</option>
-                        <option value="Comercial">Comercial</option>
-                        <option value="Financeiro">Financeiro</option>
-                        <option value="Logística">Logística</option>
-                        <option value="RH">Recursos Humanos</option>
-                        <option value="Diretoria">Diretoria</option>
-                        <option value="Outro">Outro</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="prioridade">⚡ Prioridade</label>
-                    <select id="prioridade">
-                        <option value="baixa">Baixa - Até 72 horas</option>
-                        <option value="media" selected>Média - Até 48 horas</option>
-                        <option value="alta">Alta - Até 24 horas</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="descricao">📝 Descreva o Problema *</label>
-                    <textarea id="descricao" required placeholder="Descreva detalhadamente a sua solicitação"></textarea>
-                    <div class="char-counter">
-                        <span id="charCount">0</span>/500 caracteres
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>🔐 Acessos Necessários</label>
-                    <div class="checkbox-group">
-                        <label class="checkbox-item">
-                            <input type="checkbox" value="AzShip">
-                            <span>AzShip</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" value="Bsoft">
-                            <span>Bsoft</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" value="Email">
-                            <span>Email Corporativo</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" value="Dominio">
-                            <span>Acesso ao Domínio (PC)</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" value="Assinatura">
-                            <span>Assinatura Digital</span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>💻 Equipamento será configurado?</label>
-                    <div class="radio-group">
-                        <label class="radio-item">
-                            <input type="radio" name="equip" value="sim">
-                            <span>Sim, preciso de configuração</span>
-                        </label>
-                        <label class="radio-item">
-                            <input type="radio" name="equip" value="nao" checked>
-                            <span>Não, apenas suporte</span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="form-actions">
-                    <button type="button" class="btn-secondary" onclick="limparFormulario()">
-                        🗑️ Limpar
-                    </button>
-                    <button type="submit" class="btn-submit">
-                        🚀 Abrir Chamado
-                    </button>
-                </div>
-            </form>
+      <header class="public-header">
+        <img src="logo.jpg" alt="Logo" class="logo" />
+        <div class="header-content">
+          <h1>SD - Suporte TI</h1>
+          <p>Canal para abertura de chamados para o SD</p>
+          <div class="status-info">
+            <span class="status-dot"></span>
+            <span>Sistema Online</span>
+          </div>
         </div>
-
-        <div id="successMessage" class="success-message hidden">
-            <div class="success-content">
-                <div class="success-icon">✅</div>
-                <h2>Chamado Aberto com Sucesso!</h2>
-                <p>Seu chamado foi registrado e nossa equipe entrará em contato em breve.</p>
-                <div class="protocol-info">
-                    <p><strong>Protocolo:</strong> <span id="protocoloNumero"></span></p>
-                    <button onclick="copiarProtocolo()" class="btn-copy" title="Copiar protocolo">📋</button>
-                </div>
-                <div class="sla-info">
-                    <p>🕰️ <strong>Tempo de resposta:</strong> Até 24 horas</p>
-                    <p>📧 Você receberá um email quando o chamado for finalizado</p>
-                </div>
-                <div class="action-buttons">
-                    <button onclick="consultarChamado()" class="btn-consultar">Consultar Status</button>
-                    <button onclick="novoChamado()" class="btn-novo">Abrir Novo Chamado</button>
-                </div>
-            </div>
+        <div class="header-actions">
+          <button
+            onclick="consultarChamado()"
+            class="btn-consulta"
+            title="Consultar chamado existente"
+          >
+            🔍 Consultar Chamado
+          </button>
+          <button id="btnThemePublic" onclick="toggleThemePublic()" title="Alternar tema">
+            🌙
+          </button>
         </div>
+      </header>
 
-        <div id="consultaModal" class="modal hidden">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Consultar Chamado</h3>
-                    <span onclick="fecharConsulta()" class="close">&times;</span>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="protocoloConsulta">Digite o número do protocolo:</label>
-                        <input type="text" id="protocoloConsulta" placeholder="Ex: #0001">
-                    </div>
-                    <button onclick="buscarChamado()" class="btn-buscar">Buscar</button>
-                    <div id="resultadoConsulta"></div>
-                </div>
+      <div class="form-container">
+        <form id="formChamado">
+          <div class="form-group">
+            <label for="solicitante">👤 Seu Nome *</label>
+            <input type="text" id="solicitante" required placeholder="Digite seu nome completo" />
+          </div>
+
+          <div class="form-group">
+            <label for="email">📧 Email *</label>
+            <input type="email" id="email" required placeholder="Digite seu email corporativo" />
+          </div>
+
+          <div class="form-group">
+            <label for="setor">🏢 Setor *</label>
+            <select id="setor" required>
+              <option value="">Selecione seu setor...</option>
+              <option value="Administrativo">Administrativo</option>
+              <option value="Comercial">Comercial</option>
+              <option value="Financeiro">Financeiro</option>
+              <option value="Logística">Logística</option>
+              <option value="RH">Recursos Humanos</option>
+              <option value="Diretoria">Diretoria</option>
+              <option value="Outro">Outro</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="prioridade">⚡ Prioridade</label>
+            <select id="prioridade">
+              <option value="baixa">Baixa - Até 72 horas</option>
+              <option value="media" selected>Média - Até 48 horas</option>
+              <option value="alta">Alta - Até 24 horas</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="descricao">📝 Descreva o Problema *</label>
+            <textarea
+              id="descricao"
+              required
+              placeholder="Descreva detalhadamente a sua solicitação"
+            ></textarea>
+            <div class="char-counter"><span id="charCount">0</span>/500 caracteres</div>
+          </div>
+
+          <div class="form-group">
+            <label>🔐 Acessos Necessários</label>
+            <div class="checkbox-group">
+              <label class="checkbox-item">
+                <input type="checkbox" value="Plataforma Y" />
+                <span>Plataforma Y</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" value="Plataforma X" />
+                <span>Plataforma X</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" value="Email" />
+                <span>Email Corporativo</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" value="Dominio" />
+                <span>Acesso ao Domínio (PC)</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" value="Assinatura" />
+                <span>Assinatura Digital</span>
+              </label>
             </div>
+          </div>
+
+          <div class="form-group">
+            <label>💻 Equipamento será configurado?</label>
+            <div class="radio-group">
+              <label class="radio-item">
+                <input type="radio" name="equip" value="sim" />
+                <span>Sim, preciso de configuração</span>
+              </label>
+              <label class="radio-item">
+                <input type="radio" name="equip" value="nao" checked />
+                <span>Não, apenas suporte</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" onclick="limparFormulario()">
+              🗑️ Limpar
+            </button>
+            <button type="submit" class="btn-submit">🚀 Abrir Chamado</button>
+          </div>
+        </form>
+      </div>
+
+      <div id="successMessage" class="success-message hidden">
+        <div class="success-content">
+          <div class="success-icon">✅</div>
+          <h2>Chamado Aberto com Sucesso!</h2>
+          <p>Seu chamado foi registrado e nossa equipe entrará em contato em breve.</p>
+          <div class="protocol-info">
+            <p><strong>Protocolo:</strong> <span id="protocoloNumero"></span></p>
+            <button onclick="copiarProtocolo()" class="btn-copy" title="Copiar protocolo">
+              📋
+            </button>
+          </div>
+          <div class="sla-info">
+            <p>🕰️ <strong>Tempo de resposta:</strong> Até 24 horas</p>
+            <p>📧 Você receberá um email quando o chamado for finalizado</p>
+          </div>
+          <div class="action-buttons">
+            <button onclick="consultarChamado()" class="btn-consultar">Consultar Status</button>
+            <button onclick="novoChamado()" class="btn-novo">Abrir Novo Chamado</button>
+          </div>
         </div>
+      </div>
 
-        <div class="help-section">
-            <h3>🎆 Dicas para um Atendimento Mais Rápido</h3>
-            <div class="tips-grid">
-                <div class="tip-card">
-                    <div class="tip-icon">📝</div>
-                    <h4>Seja Detalhado</h4>
-                    <p>Descreva o problema com o máximo de detalhes possível</p>
-                </div>
-                <div class="tip-card">
-                    <div class="tip-icon">📱</div>
-                    <h4>Inclua Informações</h4>
-                    <p>Mencione sistema, erro exato e quando aconteceu</p>
-                </div>
-                <div class="tip-card">
-                    <div class="tip-icon">⚡</div>
-                    <h4>Defina Prioridade</h4>
-                    <p>Escolha a prioridade correta para agilizar o atendimento</p>
-                </div>
+      <div id="consultaModal" class="modal hidden">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>Consultar Chamado</h3>
+            <span onclick="fecharConsulta()" class="close">&times;</span>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="protocoloConsulta">Digite o número do protocolo:</label>
+              <input type="text" id="protocoloConsulta" placeholder="Ex: #0001" />
             </div>
+            <button onclick="buscarChamado()" class="btn-buscar">Buscar</button>
+            <div id="resultadoConsulta"></div>
+          </div>
         </div>
+      </div>
 
-        <footer class="public-footer">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h4>Contato</h4>
-                    <p>📧 suporte@azship.com.br</p>
-                    <p>📞 (34) 3253-9090</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Horário de Atendimento</h4>
-                    <p>🕰️ Segunda a Sexta: 8h às 17:30 </p>
-                </div>
-                <div class="footer-section">
-                    <a href="login.html" class="admin-link">🔒 Acesso Administrativo</a>
-                    <p>©2025 - Criado por MAC</p>
-                </div>
-            </div>
-        </footer>
+      <div class="help-section">
+        <h3>🎆 Dicas para um Atendimento Mais Rápido</h3>
+        <div class="tips-grid">
+          <div class="tip-card">
+            <div class="tip-icon">📝</div>
+            <h4>Seja Detalhado</h4>
+            <p>Descreva o problema com o máximo de detalhes possível</p>
+          </div>
+          <div class="tip-card">
+            <div class="tip-icon">📱</div>
+            <h4>Inclua Informações</h4>
+            <p>Mencione sistema, erro exato e quando aconteceu</p>
+          </div>
+          <div class="tip-card">
+            <div class="tip-icon">⚡</div>
+            <h4>Defina Prioridade</h4>
+            <p>Escolha a prioridade correta para agilizar o atendimento</p>
+          </div>
+        </div>
+      </div>
+
+      <footer class="public-footer">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h4>Contato</h4>
+            <p>📧 suporte@suporte.com.br</p>
+            <p>📞 (34) 3253-9090</p>
+          </div>
+          <div class="footer-section">
+            <h4>Horário de Atendimento</h4>
+            <p>🕰️ Segunda a Sexta: 8h às 17:30</p>
+          </div>
+          <div class="footer-section">
+            <a href="login.html" class="admin-link">🔒 Acesso Administrativo</a>
+            <p>©2025 - Criado por MAC</p>
+          </div>
+        </div>
+      </footer>
     </div>
 
     <script src="public.js"></script>
-</body>
+  </body>
 </html>

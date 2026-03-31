@@ -1,0 +1,26 @@
+# Arquivos de credenciais
+frontend/credentials.js
+
+# Arquivos de ambiente
+backend/.env
+
+# Banco de dados
+backend/crm.db
+
+# Node modules
+node_modules/
+backend/node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+#images
+*.jpg
+*.jpeg
+*.png
+*.gif
