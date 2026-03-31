@@ -1,0 +1,23 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: crm-backend
+    ports:
+      - '3003:3003'
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend/crm.db:/app/crm.db
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: crm-frontend
+    ports:
+      - '8888:80'
+    depends_on:
+      - backend
+    restart: unless-stopped
