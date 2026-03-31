@@ -1,24 +1,24 @@
-services:
-  backend:
-    build:
-      context: ./backend
-    container_name: crm-backend
+services: # Definição dos serviços
+  backend: # Serviço do backend
+    build: # Configuração de build para o backend
+      context: ./backend # Diretório onde está o Dockerfile do backend
+    container_name: crm-backend # Nome do container para o backend
     ports:
       - '3003:3003'
     env_file:
-      - ./backend/.env
+      - ./backend/.env # Arquivo de variáveis de ambiente para o backend
     volumes:
-      - ./backend/crm.db:/app/crm.db
-      - /app/node_modules
-    restart: unless-stopped
+      - ./backend/crm.db:/app/crm.db # Montagem do volume para o banco de dados, passando o arquivo crm.db do host para o container, garantindo que os dados sejam persistidos mesmo após a parada do container
+      - /app/node_modules # Evita que os node_modules do host sejam montados no container, garantindo que as dependências sejam gerenciadas dentro do container
+    restart: unless-stopped # Política de reinício para o backend, reinicia o container a menos que ele seja parado manualmente
 
-  frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: crm-frontend
+  frontend: # Serviço do frontend
+    build: # Configuração de build para o frontend
+      context: . # Diretório onde está o Dockerfile do frontend
+      dockerfile: Dockerfile # Especifica o nome do Dockerfile para o frontend
+    container_name: crm-frontend # Nome do container para o frontend
     ports:
       - '8888:80'
     depends_on:
-      - backend
-    restart: unless-stopped
+      - backend # Garante que o backend seja iniciado antes do frontend
+    restart: unless-stopped # Política de reinício para o frontend, reinicia o container a menos que ele seja parado manualmente
