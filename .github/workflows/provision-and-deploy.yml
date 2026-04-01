@@ -1,0 +1,175 @@
+name: Provisionando EC2 e Deploy CRM do meu GIT na AWS
+
+on:
+  workflow_dispatch: #executa pelo actions manualmente
+
+jobs:
+  provision-ec2: #executar os dois jobs abaixo, primeiro o provisionamento da EC2 e depois o deploy do CRM
+    name: Criar EC2 automaticamente
+    runs-on: ubuntu-latest
+    outputs:
+      instance_id: ${{ steps.launch.outputs.instance_id }}
+      public_ip: ${{ steps.get_ip.outputs.public_ip }}
+      security_group_id: ${{ steps.sg.outputs.security_group_id }}
+
+    steps:
+      - name: Checkout do código #baixar o código do repositório para o ambiente de execução do workflow
+        uses: actions/checkout@v4
+
+      - name: Configurar credenciais AWS #configurar as credenciais da AWS para que o workflow possa interagir com os serviços da AWS, como EC2, VPC, etc.
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Obter VPC padrão #obter o ID da VPC padrão da conta AWS, que será usada para criar a instância EC2 e os recursos relacionados, como subnets e security groups
+        id: vpc
+        run: |
+          VPC_ID=$(aws ec2 describe-vpcs \
+            --filters Name=isDefault,Values=true \
+            --query "Vpcs[0].VpcId" \
+            --output text)
+          echo "vpc_id=$VPC_ID" >> $GITHUB_OUTPUT
+
+      - name: Obter Subnet padrão
+        id: subnet
+        run: |
+          SUBNET_ID=$(aws ec2 describe-subnets \
+            --filters Name=vpc-id,Values=${{ steps.vpc.outputs.vpc_id }} Name=default-for-az,Values=true \
+            --query "Subnets[0].SubnetId" \
+            --output text)
+          echo "subnet_id=$SUBNET_ID" >> $GITHUB_OUTPUT
+
+      - name: Criar Security Group
+        id: sg
+        run: |
+          SG_ID=$(aws ec2 create-security-group \
+            --group-name crm-sg-${{ github.run_id }} \
+            --description "Security Group CRM Auto Deploy" \
+            --vpc-id ${{ steps.vpc.outputs.vpc_id }} \
+            --query "GroupId" \
+            --output text)
+
+          aws ec2 authorize-security-group-ingress --group-id $SG_ID --protocol tcp --port 22 --cidr 0.0.0.0/0
+          aws ec2 authorize-security-group-ingress --group-id $SG_ID --protocol tcp --port 8888 --cidr 0.0.0.0/0
+          aws ec2 authorize-security-group-ingress --group-id $SG_ID --protocol tcp --port 3003 --cidr 0.0.0.0/0
+
+          echo "security_group_id=$SG_ID" >> $GITHUB_OUTPUT
+
+      - name: Obter AMI Amazon Linux 2023 #obter o ID da AMI mais recente do Amazon Linux 2023, que será usada para criar a instância EC2. A AMI é uma imagem pré-configurada que contém o sistema operacional e as configurações necessárias para iniciar a instância EC2
+        id: ami
+        run: |
+          AMI_ID=$(aws ssm get-parameter \
+            --name /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64 \
+            --query "Parameter.Value" \
+            --output text)
+          echo "ami_id=$AMI_ID" >> $GITHUB_OUTPUT
+
+      - name: Criar instância EC2 # criar a instância EC2 usando o ID da AMI obtido na etapa anterior, o tipo de instância t2.micro (que é elegível para o nível gratuito), a chave SSH para acesso remoto, o security group criado anteriormente e a subnet padrão. A instância também é configurada para associar um endereço IP público, permitindo o acesso externo à aplicação que será implantada posteriormente
+        id: launch
+        run: |
+          INSTANCE_ID=$(aws ec2 run-instances \
+            --image-id ${{ steps.ami.outputs.ami_id }} \
+            --instance-type t2.micro \
+            --key-name ${{ secrets.AWS_KEY_PAIR_NAME }} \
+            --security-group-ids ${{ steps.sg.outputs.security_group_id }} \
+            --subnet-id ${{ steps.subnet.outputs.subnet_id }} \
+            --associate-public-ip-address \
+            --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=crm-auto-deploy}]' \
+            --query "Instances[0].InstanceId" \
+            --output text)
+
+          echo "instance_id=$INSTANCE_ID" >> $GITHUB_OUTPUT
+
+      - name: Aguardar instância iniciar #aguardar até que a instância EC2 esteja em estado "running" antes de prosseguir para as próximas etapas, garantindo que a instância esteja pronta para receber conexões SSH e implantar a aplicação
+        run: |
+          aws ec2 wait instance-running --instance-ids ${{ steps.launch.outputs.instance_id }}
+
+      - name: Obter IP público da instância # obter o endereço IP público da instância EC2 recém-criada, que será usado para se conectar à instância via SSH e implantar a aplicação. O IP público é necessário para acessar a aplicação implantada externamente
+        id: get_ip
+        run: |
+          PUBLIC_IP=$(aws ec2 describe-instances \
+            --instance-ids ${{ steps.launch.outputs.instance_id }} \
+            --query "Reservations[0].Instances[0].PublicIpAddress" \
+            --output text)
+
+          echo "public_ip=$PUBLIC_IP" >> $GITHUB_OUTPUT
+          echo "IP público da EC2: $PUBLIC_IP"
+
+      - name: Aguardar SSH ficar disponível # aguardar até que o serviço SSH na instância EC2 esteja disponível, permitindo conexões remotas para implantar a aplicação. O script tenta se conectar ao serviço SSH na porta 22 usando netcat (nc) e aguarda até que a conexão seja bem-sucedida ou atinja o limite de tentativas
+        run: |
+          echo "Aguardando SSH..."
+          for i in {1..30}; do
+            nc -zv ${{ steps.get_ip.outputs.public_ip }} 22 && echo "SSH disponível!" && exit 0
+            echo "Tentativa $i/30 - aguardando 10s..."
+            sleep 10
+          done
+          echo "SSH não ficou disponível a tempo."
+          exit 1
+
+  deploy:
+    name: Instalar e subir aplicação na EC2
+    runs-on: ubuntu-latest
+    needs: provision-ec2
+
+    steps:
+      - name: Deploy via SSH na EC2 criada # usar a ação de SSH para se conectar à instância EC2 criada no job anterior e executar uma série de comandos para configurar o ambiente, instalar dependências, clonar o repositório da aplicação, configurar variáveis de ambiente e iniciar a aplicação usando Docker Compose
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ needs.provision-ec2.outputs.public_ip }}
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+
+            sudo dnf update -y
+            sudo dnf install -y docker git curl
+
+            sudo systemctl start docker
+            sudo systemctl enable docker
+
+            sudo usermod -aG docker ec2-user
+
+            DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
+            mkdir -p $DOCKER_CONFIG/cli-plugins
+
+            curl -SL https://github.com/docker/compose/releases/download/v2.39.1/docker-compose-linux-x86_64 -o $DOCKER_CONFIG/cli-plugins/docker-compose
+            chmod +x $DOCKER_CONFIG/cli-plugins/docker-compose
+
+            cd /home/ec2-user
+
+            if [ ! -d "CRM" ]; then
+              git clone ${{ secrets.REPO_URL }} CRM
+            fi
+
+            cd CRM
+
+            git pull origin main || true
+
+            mkdir -p frontend
+
+            cat > frontend/credential.js <<EOF
+            const credentials = {
+              admin: '${{ secrets.FRONTEND_ADMIN_PASSWORD }}',
+            }
+            EOF
+
+            cat > frontend/config.js <<EOF
+            const API_CONFIG = {
+              baseURL: 'http://${{ needs.provision-ec2.outputs.public_ip }}:3003',
+            }
+            EOF
+
+            touch backend/crm.db
+            chmod 666 backend/crm.db
+
+            docker compose down || true
+            docker compose up -d --build
+
+            docker compose ps
+
+            echo "Aplicação disponível em:"
+            echo "http://${{ needs.provision-ec2.outputs.public_ip }}:8888"
+            echo "Backend em:"
+            echo "http://${{ needs.provision-ec2.outputs.public_ip }}:3003"
