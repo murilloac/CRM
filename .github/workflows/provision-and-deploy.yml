@@ -124,7 +124,7 @@ jobs:
             set -e
 
             sudo dnf update -y
-            sudo dnf install -y docker git curl
+            sudo dnf install -y docker git
 
             sudo systemctl start docker
             sudo systemctl enable docker
