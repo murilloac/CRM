@@ -59,7 +59,7 @@ cd backend
 npm start
 ```
 
-O servidor estará disponível em: http://host67.expnac.local:6000/
+O servidor estará disponível em: http://host67:6000/
 
 ## Segurança
 
