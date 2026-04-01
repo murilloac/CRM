@@ -2,7 +2,27 @@
 
 ## Configuração Inicial
 
-### 1. Configurar Credenciais do Frontend
+### 1. Configurar URL da API
+
+Copie o arquivo de exemplo e configure a URL do seu servidor:
+
+```bash
+cd frontend
+copy config.example.js config.js
+```
+
+Edite o arquivo `config.js` e defina a URL do seu servidor:
+
+```javascript
+const API_CONFIG = {
+  baseURL: 'http://localhost:6000',
+  // ou
+  // baseURL: 'http://192.168.1.100:6000',
+  // baseURL: 'http://seu-servidor.local:6000',
+}
+```
+
+### 2. Configurar Credenciais do Frontend
 
 Copie o arquivo de exemplo e configure suas credenciais:
 

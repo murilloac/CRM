@@ -5,7 +5,7 @@ let dadosChamados = []
 
 async function carregarDados() {
   try {
-    const res = await fetch('http://host67.expnac.local:3003/chamados')
+    const res = await fetch(`${API_CONFIG.baseURL}/chamados`)
     dadosChamados = await res.json()
 
     atualizarCards()
@@ -666,7 +666,7 @@ async function abrirDetalhesHistorico(chamadoId) {
 
 async function carregarLogsHistorico(chamadoId) {
   try {
-    const res = await fetch(`http://host67.expnac.local:3003/chamados/${chamadoId}/logs`)
+    const res = await fetch(`${API_CONFIG.baseURL}/chamados/${chamadoId}/logs`)
     const logs = await res.json()
     const container = document.getElementById('logsContainerHistorico')
 

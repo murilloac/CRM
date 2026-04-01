@@ -48,7 +48,7 @@ document.getElementById('formChamado').addEventListener('submit', async (e) => {
     btnSubmit.disabled = true
     btnSubmit.innerHTML = '⏳ Enviando...'
 
-    const response = await fetch('http://host67.expnac.local:3003/chamados', {
+    const response = await fetch(`${API_CONFIG.baseURL}/chamados`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(chamado),
@@ -143,7 +143,7 @@ async function buscarChamado() {
   }
 
   try {
-    const response = await fetch(`http://host67.expnac.local:3003/chamados/${protocolo}`)
+    const response = await fetch(`${API_CONFIG.baseURL}/chamados/${protocolo}`)
 
     if (response.ok) {
       const chamado = await response.json()

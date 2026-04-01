@@ -6,7 +6,7 @@ let todosOsChamados = []
 async function carregarChamados() {
   try {
     console.log('Carregando chamados...')
-    const res = await fetch('http://host67.expnac.local:3003/chamados')
+    const res = await fetch(`${API_CONFIG.baseURL}/chamados`)
     todosOsChamados = await res.json()
 
     console.log('Chamados carregados:', todosOsChamados.length)
@@ -280,7 +280,7 @@ document.querySelectorAll('.lista').forEach((lista) => {
     const usuario = sessionStorage.getItem('crmUser')
 
     try {
-      const response = await fetch(`http://host67.expnac.local:3003/chamados/${id}/status`, {
+      const response = await fetch(`${API_CONFIG.baseURL}/chamados/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus, usuario }),
@@ -348,14 +348,14 @@ document.getElementById('btnSalvar').onclick = async () => {
 
   if (chamadoAtual) {
     // Editando chamado existente
-    await fetch(`http://host67.expnac.local:3003/chamados/${chamadoAtual.id}`, {
+    await fetch(`${API_CONFIG.baseURL}/chamados/${chamadoAtual.id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(chamado),
     })
   } else {
     // Criando novo chamado
-    const response = await fetch('http://host67.expnac.local:3003/chamados', {
+    const response = await fetch(`${API_CONFIG.baseURL}/chamados`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(chamado),
@@ -389,7 +389,7 @@ document.getElementById('btnSalvar').onclick = async () => {
 // 6. Modal de DETALHES do chamado
 // ===============================
 async function abrirDetalhes(id) {
-  const res = await fetch(`http://host67.expnac.local:3003/chamados/${id}`)
+  const res = await fetch(`${API_CONFIG.baseURL}/chamados/${id}`)
   const c = await res.json()
 
   // Armazena chamado atual para edição
@@ -520,7 +520,7 @@ async function abrirDetalhes(id) {
 
         const usuario = sessionStorage.getItem('crmUser')
         const response = await fetch(
-          `http://host67.expnac.local:3003/chamados/${chamadoId}/analista`,
+          `${API_CONFIG.baseURL}/chamados/${chamadoId}/analista`,
           {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
@@ -576,7 +576,7 @@ async function abrirDetalhes(id) {
 
 async function carregarLogs(chamadoId) {
   try {
-    const res = await fetch(`http://host67.expnac.local:3003/chamados/${chamadoId}/logs`)
+    const res = await fetch(`${API_CONFIG.baseURL}/chamados/${chamadoId}/logs`)
 
     if (!res.ok) {
       throw new Error(`HTTP ${res.status}: ${res.statusText}`)
@@ -711,7 +711,7 @@ async function alterarStatus(id, novoStatus) {
   const usuario = sessionStorage.getItem('crmUser')
 
   try {
-    const response = await fetch(`http://host67.expnac.local:3003/chamados/${id}/status`, {
+    const response = await fetch(`${API_CONFIG.baseURL}/chamados/${id}/status`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status: novoStatus, usuario }),
@@ -739,7 +739,7 @@ async function cancelarChamado(id) {
     )
   ) {
     const usuario = sessionStorage.getItem('crmUser')
-    await fetch(`http://host67.expnac.local:3003/chamados/${id}/status`, {
+    await fetch(`${API_CONFIG.baseURL}/chamados/${id}/status`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status: 'cancelado', usuario }),
@@ -763,7 +763,7 @@ async function atribuirParaMim(id, event) {
   const usuario = sessionStorage.getItem('crmUser')
 
   try {
-    const response = await fetch(`http://host67.expnac.local:3003/chamados/${id}/analista`, {
+    const response = await fetch(`${API_CONFIG.baseURL}/chamados/${id}/analista`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -795,7 +795,7 @@ async function adicionarComentario(id, event) {
     const usuario = sessionStorage.getItem('crmUser')
 
     try {
-      const response = await fetch(`http://host67.expnac.local:3003/chamados/${id}/nota`, {
+      const response = await fetch(`${API_CONFIG.baseURL}/chamados/${id}/nota`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nota: comentario.trim(), usuario }),
@@ -1130,7 +1130,7 @@ async function verificarMudancas() {
     // Atualiza status para "verificando"
     atualizarStatusConexao('checking', 'Verificando...')
 
-    const res = await fetch('http://host67.expnac.local:3003/chamados')
+    const res = await fetch(`${API_CONFIG.baseURL}/chamados`)
 
     if (!res.ok) {
       throw new Error(`HTTP ${res.status}`)
