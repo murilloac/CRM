@@ -71,7 +71,7 @@ jobs:
         run: |
           INSTANCE_ID=$(aws ec2 run-instances \
             --image-id ${{ steps.ami.outputs.ami_id }} \
-            --instance-type t2.micro \
+            --instance-type t3.micro \
             --key-name ${{ secrets.AWS_KEY_PAIR_NAME }} \
             --security-group-ids ${{ steps.sg.outputs.security_group_id }} \
             --subnet-id ${{ steps.subnet.outputs.subnet_id }} \
