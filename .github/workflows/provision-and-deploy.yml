@@ -1,10 +1,10 @@
 name: Provisionando EC2 e Deploy CRM do meu GIT na AWS
 
 on:
-  workflow_dispatch: #executa pelo actions manualmente
+  workflow_dispatch:
 
 jobs:
-  provision-ec2: #executar os dois jobs abaixo, primeiro o provisionamento da EC2 e depois o deploy do CRM
+  provision-ec2:
     name: Criar EC2 automaticamente
     runs-on: ubuntu-latest
     outputs:
@@ -13,17 +13,17 @@ jobs:
       security_group_id: ${{ steps.sg.outputs.security_group_id }}
 
     steps:
-      - name: Checkout do código #baixar o código do repositório para o ambiente de execução do workflow
+      - name: Checkout do código
         uses: actions/checkout@v4
 
-      - name: Configurar credenciais AWS #configurar as credenciais da AWS para que o workflow possa interagir com os serviços da AWS, como EC2, VPC, etc.
+      - name: Configurar credenciais AWS
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Obter VPC padrão #obter o ID da VPC padrão da conta AWS, que será usada para criar a instância EC2 e os recursos relacionados, como subnets e security groups
+      - name: Obter VPC padrão
         id: vpc
         run: |
           VPC_ID=$(aws ec2 describe-vpcs \
@@ -57,7 +57,7 @@ jobs:
 
           echo "security_group_id=$SG_ID" >> $GITHUB_OUTPUT
 
-      - name: Obter AMI Amazon Linux 2023 #obter o ID da AMI mais recente do Amazon Linux 2023, que será usada para criar a instância EC2. A AMI é uma imagem pré-configurada que contém o sistema operacional e as configurações necessárias para iniciar a instância EC2
+      - name: Obter AMI Amazon Linux 2023
         id: ami
         run: |
           AMI_ID=$(aws ssm get-parameter \
@@ -66,7 +66,7 @@ jobs:
             --output text)
           echo "ami_id=$AMI_ID" >> $GITHUB_OUTPUT
 
-      - name: Criar instância EC2 # criar a instância EC2 usando o ID da AMI obtido na etapa anterior, o tipo de instância t2.micro (que é elegível para o nível gratuito), a chave SSH para acesso remoto, o security group criado anteriormente e a subnet padrão. A instância também é configurada para associar um endereço IP público, permitindo o acesso externo à aplicação que será implantada posteriormente
+      - name: Criar instância EC2
         id: launch
         run: |
           INSTANCE_ID=$(aws ec2 run-instances \
@@ -82,11 +82,11 @@ jobs:
 
           echo "instance_id=$INSTANCE_ID" >> $GITHUB_OUTPUT
 
-      - name: Aguardar instância iniciar #aguardar até que a instância EC2 esteja em estado "running" antes de prosseguir para as próximas etapas, garantindo que a instância esteja pronta para receber conexões SSH e implantar a aplicação
+      - name: Aguardar instância iniciar
         run: |
           aws ec2 wait instance-running --instance-ids ${{ steps.launch.outputs.instance_id }}
 
-      - name: Obter IP público da instância # obter o endereço IP público da instância EC2 recém-criada, que será usado para se conectar à instância via SSH e implantar a aplicação. O IP público é necessário para acessar a aplicação implantada externamente
+      - name: Obter IP público da instância
         id: get_ip
         run: |
           PUBLIC_IP=$(aws ec2 describe-instances \
@@ -97,7 +97,7 @@ jobs:
           echo "public_ip=$PUBLIC_IP" >> $GITHUB_OUTPUT
           echo "IP público da EC2: $PUBLIC_IP"
 
-      - name: Aguardar SSH ficar disponível # aguardar até que o serviço SSH na instância EC2 esteja disponível, permitindo conexões remotas para implantar a aplicação. O script tenta se conectar ao serviço SSH na porta 22 usando netcat (nc) e aguarda até que a conexão seja bem-sucedida ou atinja o limite de tentativas
+      - name: Aguardar SSH ficar disponível
         run: |
           echo "Aguardando SSH..."
           for i in {1..30}; do
@@ -114,7 +114,7 @@ jobs:
     needs: provision-ec2
 
     steps:
-      - name: Deploy via SSH na EC2 criada # usar a ação de SSH para se conectar à instância EC2 criada no job anterior e executar uma série de comandos para configurar o ambiente, instalar dependências, clonar o repositório da aplicação, configurar variáveis de ambiente e iniciar a aplicação usando Docker Compose
+      - name: Deploy via SSH na EC2 criada
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ needs.provision-ec2.outputs.public_ip }}
@@ -147,7 +147,7 @@ jobs:
 
             mkdir -p frontend
 
-            cat > frontend/credential.js <<EOF
+            cat > frontend/credentials.js <<EOF
             const credentials = {
               admin: '${{ secrets.FRONTEND_ADMIN_PASSWORD }}',
             }
