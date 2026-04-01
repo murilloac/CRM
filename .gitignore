@@ -25,3 +25,6 @@ Thumbs.db
 *.jpeg
 *.png
 *.gif
+/frontend/*.jpg
+/frontend/*.jpeg 
+/frontend/*.png
