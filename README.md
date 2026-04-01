@@ -64,5 +64,6 @@ npm start
 - ⚠️ **NUNCA** commite o arquivo `credentials.js`
 - ⚠️ **NUNCA** commite o arquivo `.env`
 - ⚠️ **NUNCA** commite o banco de dados `crm.db`
+- ⚠️ **NUNCA** Por se tratar de um projeto laboratorial em um ambiente que já até foi desativado as portas da Instância foi configurada no ALL
 
 Estes arquivos estão protegidos pelo `.gitignore`
