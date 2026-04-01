@@ -173,7 +173,7 @@ function criarGraficoAnalistas() {
   if (graficos.analistas) return
   const ctx = document.getElementById('graficoAnalistas').getContext('2d')
 
-  const analistas = ['Dayane', 'Felipe', 'Rafael', 'Yul']
+  const analistas = ['agente1', 'agente2', 'agente3', 'agente4']
   const dados = analistas.map(
     (analista) => dadosChamados.filter((c) => c.analista === analista).length,
   )

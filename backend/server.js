@@ -46,4 +46,4 @@ app.put('/usuarios/:usuario/senha', chamados.alterarSenha)
 // ==========================
 // INICIAR SERVIDOR
 // ==========================
-app.listen(3003, () => console.log('Servidor rodando em http://host67.expnac.local:3003/'))
+app.listen(6000, () => console.log('Servidor rodando em http://localhost:6000/'))

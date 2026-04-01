@@ -211,7 +211,7 @@ function criarCard(chamado) {
 
 function getTipoIcon(flags) {
   if (!flags || !Array.isArray(flags)) return '🔧'
-  if (flags.includes('AzShip') || flags.includes('Bsoft')) return '💻'
+  if (flags.includes('Sistema A') || flags.includes('Bsoft')) return '💻'
   if (flags.includes('Email')) return '📧'
   if (flags.includes('Dominio')) return '🏢'
   if (flags.includes('Assinatura')) return '✍️'
@@ -395,7 +395,7 @@ async function abrirDetalhes(id) {
   // Armazena chamado atual para edição
   chamadoAtual = c
 
-  const analistas = ['', 'Dayane', 'Felipe', 'Rafael', 'Yul', 'Alex']
+  const analistas = ['', 'agente1', 'agente2', 'agente3', 'agente4']
   const statusOrder = ['aberto', 'atendimento', 'finalizado']
   const currentIndex = statusOrder.indexOf(c.status)
 
@@ -519,14 +519,11 @@ async function abrirDetalhes(id) {
         selectEl.disabled = true
 
         const usuario = sessionStorage.getItem('crmUser')
-        const response = await fetch(
-          `${API_CONFIG.baseURL}/chamados/${chamadoId}/analista`,
-          {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ analista: e.target.value, usuario }),
-          },
-        )
+        const response = await fetch(`${API_CONFIG.baseURL}/chamados/${chamadoId}/analista`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ analista: e.target.value, usuario }),
+        })
 
         if (response.ok) {
           // Sucesso
