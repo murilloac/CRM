@@ -1,0 +1,28 @@
+- Instânciei uma EC2 em minha conta da AWS - Instância com Amazon Linux
+
+- Criei um grupo de segurança e editei as regras de entrada
+  Liberando porta SSH, TCP para as portada da minha aplicação.
+
+- Concetado na maquina via CMD do Win
+  sudo yum update -y
+  sudo amazon-linux-extras install docker -y
+  sudo service docker start
+  sudo systemctl enable docker
+  sudo usermod -aG docker ec2-user # adicionando meu user ao grupo do docker sem remover os demais grupos -a
+
+- Instalando Docker Composer
+  DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
+  mkdir -p $DOCKER_CONFIG/cli-plugins
+  
+  curl -SL https://github.com/docker/compose/releases/download/v2.39.1/docker-compose-linux-x86_64 -o $DOCKER_CONFIG/cli-plugins/docker-compose
+  
+  chmod +x $DOCKER_CONFIG/cli-plugins/docker-compose
+
+- Clonar meu repositório
+
+- Utilizo o SQLite para garantir a persistência executei o chmod 666 no arquivo .db
+
+- Build Docker
+  docker compose up -d --build
+
+
