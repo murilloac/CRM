@@ -59,7 +59,11 @@ cd backend
 npm start
 ```
 
+<<<<<<< HEAD
 O servidor estará disponível em: http://localhost:6000/
+=======
+O servidor estará disponível em: http://host67:6000/
+>>>>>>> fbf02bc5b8f3eb414380132090462342b3e23598
 
 ## Segurança
 
